@@ -1,0 +1,90 @@
+---
+/**
+ * COMPONENTE: SEPARADOR EN FORMA DE OLA (animado)
+ * ------------------------------------------------------------------
+ * Une dos secciones de distinto color con dos olas que se desplazan
+ * lentamente, igual que las de la portada.
+ *
+ * Props:
+ *  - from: token de color de la sección de ARRIBA (ej. "bg").
+ *  - to:   token de color de la sección de ABAJO (ej. "tint").
+ *  - reverse: invierte el sentido del movimiento, para variar.
+ *
+ * Uso: <Wave from="bg" to="tint" />
+ *
+ * Cómo se pinta (para que el fondo decorativo no deje cortes):
+ *  - Si abajo va "bg", la ola se dibuja invertida y se rellena con el
+ *    color de ARRIBA; el resto queda transparente.
+ *  - En los demás casos se rellena con el color de ABAJO; el fondo es
+ *    transparente si arriba va "bg" o el color de arriba si no.
+ *
+ * Animación: cada SVG mide el 200% del ancho y repite el dibujo dos
+ * veces; se mueve un -50% y vuelve a empezar sin que se note el salto.
+ * Con "reducir movimiento" activado, las olas quedan quietas.
+ */
+interface Props {
+  from: string;
+  to: string;
+  reverse?: boolean;
+}
+
+const { from, to, reverse = false } = Astro.props;
+
+const inverted = to === 'bg';
+const fill = `var(--${inverted ? from : to})`;
+const background = from === 'bg' || inverted ? 'transparent' : `var(--${from})`;
+---
+
+<div class:list={['wave', { inverted, reverse }]} style={`--wave-fill: ${fill}; --wave-bg: ${background};`} aria-hidden="true">
+  <!-- Capa trasera, translúcida y más lenta -->
+  <svg class="layer back" viewBox="0 0 2880 120" preserveAspectRatio="none">
+    <path d="M0 50 C240 0 480 100 720 50 S1200 100 1440 50 S1920 100 2160 50 S2640 100 2880 50 V120 H0 Z"></path>
+  </svg>
+  <!-- Capa delantera, sólida -->
+  <svg class="layer front" viewBox="0 0 2880 120" preserveAspectRatio="none">
+    <path d="M0 72 C240 34 480 110 720 72 S1200 110 1440 72 S1920 110 2160 72 S2640 110 2880 72 V120 H0 Z"></path>
+  </svg>
+</div>
+
+<style>
+  .wave {
+    position: relative;
+    height: clamp(40px, 6vw, 90px);
+    margin-block: -1px; /* evita una línea fina entre la ola y la sección */
+    overflow: hidden;
+    background: var(--wave-bg);
+  }
+  /* Ola invertida: el relleno queda arriba */
+  .inverted {
+    transform: scaleY(-1);
+  }
+  .layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    animation: wave-drift 18s linear infinite;
+  }
+  .layer path {
+    fill: var(--wave-fill);
+  }
+  .back {
+    animation-duration: 26s;
+    animation-direction: reverse;
+  }
+  .back path {
+    opacity: 0.45;
+  }
+  .reverse .front {
+    animation-direction: reverse;
+  }
+  .reverse .back {
+    animation-direction: normal;
+  }
+  @keyframes wave-drift {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

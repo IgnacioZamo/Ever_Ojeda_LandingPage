@@ -1,0 +1,140 @@
+---
+/**
+ * SECCIÓN: PREGUNTAS FRECUENTES (#preguntas)
+ * ------------------------------------------------------------------
+ * Acordeón hecho con <details>/<summary> nativos: no necesita
+ * JavaScript y es accesible por teclado. La primera pregunta se
+ * muestra abierta.
+ *
+ * Para agregar una pregunta: sumar { q, a } al array `faqs`.
+ * Layout: título fijo a la izquierda + lista (escritorio);
+ * una sola columna en tablet y móvil (≤ 1024px).
+ */
+const faqs = [
+  {
+    q: '¿Mi empresa está obligada a tener un servicio de Higiene y Seguridad?',
+    a: 'Sí. La Ley 19.587 y el Decreto 351/79 exigen que todo empleador cuente con un servicio de Higiene y Seguridad. Las horas profesionales mínimas dependen de la cantidad de trabajadores y del nivel de riesgo de la actividad.',
+  },
+  {
+    q: '¿Cada cuánto hay que hacer las mediciones de ruido e iluminación?',
+    a: 'Como regla general, una vez al año y cada vez que cambia el proceso, la maquinaria o la distribución del lugar de trabajo. Los protocolos se presentan con el formato que exige la Superintendencia de Riesgos del Trabajo.',
+  },
+  {
+    q: '¿Trabajás con pymes o solo con grandes industrias?',
+    a: 'Con ambas. Para pymes armo un plan a medida con visitas mensuales y prioridades acordes al presupuesto. Para empresas grandes coordino con el equipo interno y la ART.',
+  },
+  {
+    q: '¿Qué pasa si recibo una intimación o una inspección?',
+    a: 'Reviso la intimación, preparo la documentación pendiente y te acompaño en la respuesta. Si es urgente, priorizo una visita dentro de las 48 horas.',
+  },
+  {
+    q: '¿En qué zona trabajás?',
+    a: 'Atiendo de forma presencial en la zona indicada en contacto y alrededores. El seguimiento documental y algunas capacitaciones también pueden hacerse de forma remota.',
+  },
+];
+---
+
+<section class="section" id="preguntas" aria-labelledby="preguntas-title">
+  <div class="wrap layout">
+    <div class="section-head side">
+      <p class="eyebrow">Preguntas frecuentes</p>
+      <h2 id="preguntas-title">Antes de empezar</h2>
+      <p>Si tu duda no está acá, escribime y te respondo en el día.</p>
+      <a class="btn btn-ghost" href="#contacto">Hacer una consulta</a>
+    </div>
+    <div class="list">
+      {
+        faqs.map((f, i) => (
+          <details open={i === 0}>
+            <summary>
+              <span>{f.q}</span>
+              <span class="chev" aria-hidden="true" />
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+  }
+  .side {
+    position: sticky;
+    top: 100px;
+    justify-items: start;
+  }
+  .list {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+  }
+  details {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    transition: border-color 0.2s ease;
+  }
+  details[open] {
+    border-color: var(--tint-2);
+  }
+  summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 22px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .chev {
+    flex: none;
+    position: relative;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--tint);
+  }
+  .chev::before,
+  .chev::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 2px;
+    background: var(--accent-strong);
+    transform: translate(-50%, -50%);
+    transition: transform 0.25s ease;
+  }
+  .chev::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+  details[open] .chev::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  details p {
+    padding: 0 22px 22px;
+    color: var(--muted);
+    max-width: 65ch;
+  }
+  @media (max-width: 1024px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .side {
+      position: static;
+    }
+  }
+</style>

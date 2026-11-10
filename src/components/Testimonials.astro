@@ -1,0 +1,150 @@
+---
+/**
+ * SECCIÓN: TESTIMONIOS (#testimonios)
+ * ------------------------------------------------------------------
+ * Opiniones de responsables de empresas clientes. Cada tarjeta tiene
+ * un resultado medible (metric), la cita y quién la dice.
+ * ⚠️ Son testimonios de EJEMPLO: reemplazar por opiniones reales y
+ * pedir autorización a cada persona antes de publicarlas.
+ *
+ * Fondo: banda turquesa (.band).
+ * Layout: 3 columnas → 1 columna en tablet y móvil (≤ 1024px).
+ */
+// Testimonios de ejemplo: reemplazar por opiniones reales de clientes.
+const quotes = [
+  {
+    text: 'En seis meses bajamos los días perdidos por accidentes a cero. Ever logró que los operarios usen los EPP porque entienden para qué sirven.',
+    name: 'Mariana López',
+    role: 'Jefa de Planta · Molinos Sur',
+    metric: '0 días perdidos',
+  },
+  {
+    text: 'Llegó la inspección y teníamos todo: protocolos de ruido, iluminación y el plan de evacuación firmado. Por primera vez no hubo observaciones.',
+    name: 'Julián Ferreyra',
+    role: 'Gerente de Operaciones · Paraná Logística',
+    metric: 'Inspección sin observaciones',
+  },
+  {
+    text: 'Sus capacitaciones en obra son cortas, prácticas y en el lenguaje de la gente. El equipo lo espera cada mes.',
+    name: 'Rocío Benítez',
+    role: 'Directora de Obra · ANDES Constructora',
+    metric: '+120 operarios capacitados',
+  },
+];
+---
+
+<section class="section band" id="testimonios" aria-labelledby="testimonios-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Testimonios</p>
+      <h2 id="testimonios-title">Lo que cuentan quienes ya trabajaron conmigo</h2>
+    </div>
+    <ul class="quotes">
+      {
+        quotes.map((q) => (
+          <li>
+            <figure>
+              <span class="metric">{q.metric}</span>
+              <blockquote>
+                <p>{q.text}</p>
+              </blockquote>
+              <figcaption>
+                <span class="avatar" aria-hidden="true">
+                  {q.name
+                    .split(' ')
+                    .map((w) => w[0])
+                    .join('')}
+                </span>
+                <span>
+                  <strong>{q.name}</strong>
+                  <small>{q.role}</small>
+                </span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .quotes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  figure {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: clamp(22px, 3vw, 30px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+  }
+  .metric {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--tint);
+    color: var(--accent-strong);
+  }
+  blockquote {
+    margin: 0;
+    position: relative;
+  }
+  blockquote p {
+    font-size: 1.08rem;
+    line-height: 1.6;
+  }
+  blockquote p::before {
+    content: '“';
+    display: block;
+    font: 800 3.4rem/0.6 var(--font-display);
+    color: var(--accent);
+    margin-bottom: 4px;
+    height: 0.55em;
+  }
+  figcaption {
+    margin-top: auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--tint-2);
+    color: var(--accent-strong);
+    font: 700 0.9rem/1 var(--font-display);
+  }
+  figcaption > span:last-child {
+    display: grid;
+    line-height: 1.3;
+    min-width: 0;
+  }
+  figcaption small {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 1024px) {
+    .quotes {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 640px;
+    }
+  }
+</style>

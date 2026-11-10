@@ -1,0 +1,429 @@
+---
+/**
+ * SECCIÓN: FOTOS DE OBRAS Y VISITAS (#obras)
+ * ------------------------------------------------------------------
+ * Galería con las obras, plantas y capacitaciones que visita Ever.
+ *
+ * Partes:
+ *  - Filtros por categoría (botones): muestran u ocultan fotos.
+ *  - Grilla tipo "mosaico": algunas fotos ocupan 2 columnas (wide)
+ *    o 2 filas (tall). `grid-auto-flow: dense` rellena los huecos.
+ *  - Visor ampliado (<dialog>): se abre al tocar una foto; tiene
+ *    anterior/siguiente, se cierra con ✕, Escape o tocando afuera.
+ *
+ * Datos: src/data/photos.ts (ahí se explica cómo poner fotos reales).
+ * Mientras no haya fotos, cada una se dibuja con <PhotoScene />.
+ *
+ * Layout: 4 columnas → 2 (tablet ≤ 1024px) → 1 (móvil ≤ 600px).
+ */
+import { photos, categories } from '../data/photos';
+import PhotoScene from './PhotoScene.astro';
+
+const filters = ['Todas', ...categories];
+---
+
+<section class="section gallery" id="obras" aria-labelledby="obras-title">
+  <div class="wrap">
+    <!-- Encabezado + filtros -->
+    <div class="top">
+      <div class="section-head">
+        <p class="eyebrow">Obras y visitas</p>
+        <h2 id="obras-title">En el lugar, donde se trabaja</h2>
+        <p>Algunas de las obras, plantas y depósitos que visito cada semana: inspecciones, mediciones y capacitaciones con el personal.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrar fotos por categoría">
+        {
+          filters.map((f, i) => (
+            <button type="button" class="filter" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}>
+              {f}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Mosaico de fotos -->
+    <ul class="grid">
+      {
+        photos.map((p, i) => {
+          const uid = `ph${i}`;
+          return (
+            <li class:list={['tile', p.size ?? 'normal']} data-category={p.category}>
+              <button type="button" class="tile-btn" data-index={i} aria-label={`Ampliar foto: ${p.title}`}>
+                <span class="media" data-uid={uid}>
+                  {p.src ? <img src={p.src} alt={p.alt ?? p.title} loading="lazy" /> : <PhotoScene scene={p.scene} uid={uid} />}
+                </span>
+                {!p.src && <span class="badge">Foto de ejemplo</span>}
+                <span class="cap">
+                  <span class="cat">{p.category}</span>
+                  <strong>{p.title}</strong>
+                  <small>
+                    {p.place} · {p.date}
+                  </small>
+                </span>
+              </button>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+
+  <!-- Visor ampliado -->
+  <dialog class="lightbox" id="lightbox" aria-label="Foto ampliada">
+    <div class="lb-inner">
+      <button type="button" class="lb-close" aria-label="Cerrar">✕</button>
+      <div class="lb-media"></div>
+      <div class="lb-bar">
+        <button type="button" class="lb-nav" data-dir="-1" aria-label="Foto anterior">←</button>
+        <div class="lb-text">
+          <strong class="lb-title"></strong>
+          <span class="lb-sub"></span>
+        </div>
+        <span class="lb-count"></span>
+        <button type="button" class="lb-nav" data-dir="1" aria-label="Foto siguiente">→</button>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<style>
+  /* ---------- Encabezado y filtros ---------- */
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0 32px;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+  .filter {
+    font: 600 0.9rem/1 var(--font-body);
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--tint-2);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .filter:hover {
+    border-color: var(--accent);
+  }
+  .filter[aria-pressed='true'] {
+    background: var(--accent-strong);
+    border-color: var(--accent-strong);
+    color: var(--on-accent);
+  }
+
+  /* ---------- Mosaico ---------- */
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: 210px;
+    grid-auto-flow: dense;
+    gap: 14px;
+  }
+  .wide {
+    grid-column: span 2;
+  }
+  .tall {
+    grid-row: span 2;
+  }
+  .tile-btn {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: zoom-in;
+    background: var(--tint);
+    text-align: left;
+    font: inherit;
+  }
+  .media {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.6s ease;
+  }
+  .media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .tile-btn:hover .media,
+  .tile-btn:focus-visible .media {
+    transform: scale(1.05);
+  }
+  /* Degradado inferior para que el texto se lea sobre cualquier foto */
+  .tile-btn::after {
+    content: '';
+    position: absolute;
+    inset: 40% 0 0;
+    background: linear-gradient(transparent, rgb(6 22 25 / 0.82));
+    pointer-events: none;
+  }
+  .cap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: grid;
+    gap: 2px;
+    padding: 16px 18px;
+    color: #f1f6f5; /* texto sobre foto: claro en ambos temas */
+    transition: transform 0.35s ease;
+  }
+  .tile-btn:hover .cap {
+    transform: translateY(-4px);
+  }
+  .cat {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9fe3d6;
+  }
+  .cap strong {
+    font: 700 1.05rem/1.2 var(--font-display);
+  }
+  .cap small {
+    font-size: 0.82rem;
+    opacity: 0.85;
+  }
+  .badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 0.78);
+    color: #2b4146;
+  }
+
+  /* ---------- Visor ampliado ---------- */
+  .lightbox {
+    width: min(980px, calc(100% - 32px));
+    max-height: calc(100% - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+  }
+  .lightbox::backdrop {
+    background: rgb(4 15 17 / 0.82);
+    backdrop-filter: blur(4px);
+  }
+  .lb-inner {
+    position: relative;
+    display: grid;
+  }
+  .lb-media {
+    aspect-ratio: 4 / 3;
+    max-height: 72vh;
+    width: 100%;
+    background: var(--tint);
+  }
+  .lb-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .lb-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: rgb(255 255 255 / 0.9);
+    color: #0d2b30;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .lb-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+  .lb-text {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+  }
+  .lb-title {
+    font: 700 1.1rem/1.25 var(--font-display);
+  }
+  .lb-sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .lb-count {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .lb-nav {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--tint-2);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  .lb-nav:hover {
+    border-color: var(--accent);
+  }
+
+  /* ---------- Tablet (≤ 1024px) ---------- */
+  @media (max-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 220px;
+    }
+  }
+
+  /* ---------- Móvil (≤ 600px) ---------- */
+  @media (max-width: 600px) {
+    .filters {
+      flex-wrap: nowrap;
+      overflow-x: auto; /* los filtros se deslizan de costado sin mover la página */
+      margin-inline: calc(var(--gutter) * -1) calc(var(--gutter-r) * -1);
+      padding-inline: var(--gutter) var(--gutter-r);
+      scrollbar-width: none;
+    }
+    .filter {
+      flex: none;
+    }
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-auto-rows: 230px;
+    }
+    .wide,
+    .tall {
+      grid-column: auto;
+      grid-row: auto;
+    }
+    .lb-bar {
+      flex-wrap: wrap;
+    }
+    .lb-text {
+      flex: 1 1 100%;
+      order: -1;
+    }
+    .lb-count {
+      margin-inline: auto;
+    }
+  }
+</style>
+
+<script is:inline>
+  // ---------- Galería: filtros + visor ampliado ----------
+  (function () {
+    var section = document.getElementById('obras');
+    if (!section) return;
+    var tiles = Array.prototype.slice.call(section.querySelectorAll('.tile'));
+    var filterBtns = section.querySelectorAll('.filter');
+    var dialog = document.getElementById('lightbox');
+    var lbMedia = dialog.querySelector('.lb-media');
+    var lbTitle = dialog.querySelector('.lb-title');
+    var lbSub = dialog.querySelector('.lb-sub');
+    var lbCount = dialog.querySelector('.lb-count');
+    var current = 0;
+
+    // Fotos visibles según el filtro activo
+    function visibleTiles() {
+      return tiles.filter(function (t) {
+        return !t.hidden;
+      });
+    }
+
+    // Filtros
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var value = btn.getAttribute('data-filter');
+        filterBtns.forEach(function (b) {
+          b.setAttribute('aria-pressed', String(b === btn));
+        });
+        tiles.forEach(function (t) {
+          t.hidden = value !== 'Todas' && t.getAttribute('data-category') !== value;
+        });
+      });
+    });
+
+    // Muestra en el visor la foto número `i` de las visibles
+    function show(i) {
+      var list = visibleTiles();
+      if (!list.length) return;
+      current = (i + list.length) % list.length;
+      var tile = list[current];
+      var media = tile.querySelector('.media');
+      var uid = media.getAttribute('data-uid');
+      // Se renombran los id de los degradados para no duplicarlos en la página
+      lbMedia.innerHTML = media.innerHTML.split(uid + '-').join(uid + '-lb-');
+      lbTitle.textContent = tile.querySelector('.cap strong').textContent;
+      lbSub.textContent = tile.querySelector('.cap small').textContent;
+      lbCount.textContent = current + 1 + ' / ' + list.length;
+    }
+
+    function open(tile) {
+      show(visibleTiles().indexOf(tile));
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+    }
+
+    function close() {
+      if (typeof dialog.close === 'function') dialog.close();
+      else dialog.removeAttribute('open');
+    }
+
+    tiles.forEach(function (tile) {
+      tile.querySelector('.tile-btn').addEventListener('click', function () {
+        open(tile);
+      });
+    });
+
+    dialog.querySelector('.lb-close').addEventListener('click', close);
+    dialog.querySelectorAll('.lb-nav').forEach(function (b) {
+      b.addEventListener('click', function () {
+        show(current + Number(b.getAttribute('data-dir')));
+      });
+    });
+
+    // Cerrar tocando el fondo oscuro
+    dialog.addEventListener('click', function (e) {
+      if (e.target === dialog) close();
+    });
+
+    // Flechas del teclado (Escape lo maneja <dialog> por sí solo)
+    dialog.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') show(current - 1);
+      if (e.key === 'ArrowRight') show(current + 1);
+    });
+  })();
+</script>

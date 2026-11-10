@@ -1,0 +1,14 @@
+# dependencias
+node_modules/
+
+# salida de Astro
+dist/
+.astro/
+
+# sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# archivo generado para el Artifact (se recrea con `npm run artifact`)
+artifact/

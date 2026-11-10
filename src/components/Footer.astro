@@ -1,0 +1,253 @@
+---
+/**
+ * PIE DE PÁGINA (footer)
+ * ------------------------------------------------------------------
+ * Fila 1 · Cuatro columnas:
+ *   1. Marca: nombre, título y frase breve.
+ *   2. Contacto: WhatsApp, LinkedIn y correo (datos en src/data/site.ts).
+ *   3. Secciones: enlaces internos.
+ *   4. Marco legal: normas con las que trabaja.
+ * Fila 2 · Copyright y "Volver arriba".
+ *
+ * Colores: usa los tokens --footer-* de global.css (fondo oscuro en
+ * ambos temas).
+ * Layout fila 1: 4 columnas → 2 (tablet ≤ 1024px) → 1 (móvil ≤ 600px).
+ */
+import { site, whatsappUrl } from '../data/site';
+import ContactIcon from './ContactIcon.astro';
+
+const { contact } = site;
+const year = new Date().getFullYear();
+
+const sections = [
+  { href: '#beneficios', label: 'Beneficios' },
+  { href: '#servicios', label: 'Servicios' },
+  { href: '#proceso', label: 'Cómo trabajo' },
+  { href: '#obras', label: 'Obras' },
+  { href: '#empresas', label: 'Empresas' },
+  { href: '#preguntas', label: 'Preguntas' },
+  { href: '#contacto', label: 'Pedir propuesta' },
+];
+
+const laws = ['Ley 19.587', 'Decreto 351/79', 'Ley 24.557 (Riesgos del Trabajo)', 'Decreto 911/96 (Construcción)'];
+---
+
+<footer class="site-footer">
+  <!-- Fila 1: columnas -->
+  <div class="wrap cols">
+    <!-- 1. Marca -->
+    <div class="brand">
+      <span class="mono" aria-hidden="true">{site.initials}</span>
+      <div>
+        <strong>{site.name}</strong>
+        <span>{site.title}</span>
+      </div>
+      <p>Servicio de Higiene y Seguridad para empresas: prevención, cumplimiento legal y capacitación.</p>
+    </div>
+
+    <!-- 2. Contacto -->
+    <div>
+      <h3>Contacto</h3>
+      <ul class="contact">
+        <li>
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+            <ContactIcon name="whatsapp" tone="dark" />
+            <span>
+              <small>WhatsApp</small>
+              {contact.whatsappLabel}
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer">
+            <ContactIcon name="linkedin" tone="dark" />
+            <span>
+              <small>LinkedIn</small>
+              {contact.linkedinLabel}
+            </span>
+          </a>
+        </li>
+        <li>
+          <!-- El correo se muestra como texto seleccionable (los enlaces mailto: no siempre funcionan) -->
+          <div class="as-row">
+            <ContactIcon name="email" tone="dark" />
+            <span>
+              <small>Correo electrónico</small>
+              <span class="select">{contact.email}</span>
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 3. Secciones -->
+    <div>
+      <h3>Secciones</h3>
+      <ul class="links">
+        {sections.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+      </ul>
+    </div>
+
+    <!-- 4. Marco legal -->
+    <div>
+      <h3>Marco legal</h3>
+      <ul class="links">
+        {laws.map((l) => <li>{l}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Fila 2: legales -->
+  <div class="wrap bottom">
+    <span>© {year} {site.name} · {site.title}</span>
+    <a href="#inicio">Volver arriba ↑</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--footer-bg);
+    color: var(--footer-fg);
+    padding-top: clamp(36px, 6vw, 64px);
+  }
+
+  /* ---------- Fila 1: columnas ---------- */
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 0.8fr) minmax(0, 1fr);
+    gap: 32px;
+    padding-block: clamp(8px, 2vw, 16px) clamp(32px, 5vw, 48px);
+  }
+  .cols h3 {
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--footer-muted);
+  }
+  .cols ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  /* Marca */
+  .brand {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-content: start;
+    align-items: center;
+    gap: 14px;
+  }
+  .mono {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--footer-bg);
+    font: 800 1rem/1 var(--font-display);
+    font-stretch: 120%;
+  }
+  .brand div {
+    display: grid;
+    line-height: 1.3;
+  }
+  .brand strong {
+    font: 750 1.15rem/1.2 var(--font-display);
+  }
+  .brand div span {
+    font-size: 0.85rem;
+    color: var(--footer-muted);
+  }
+  .brand p {
+    grid-column: 1 / -1;
+    color: var(--footer-muted);
+    font-size: 0.95rem;
+    max-width: 36ch;
+  }
+
+  /* Contacto */
+  .cols .contact {
+    gap: 14px;
+  }
+  .contact a,
+  .as-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--footer-fg);
+    text-decoration: none;
+    font-weight: 600;
+    min-width: 0;
+  }
+  .contact a > span,
+  .as-row > span {
+    display: grid;
+    min-width: 0;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+  .contact small {
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--footer-muted);
+  }
+  .contact a:hover > span {
+    color: var(--accent);
+  }
+  .select {
+    user-select: all;
+  }
+
+  /* Enlaces y normas */
+  .links {
+    font-size: 0.95rem;
+    color: var(--footer-muted);
+  }
+  .links a,
+  .bottom a {
+    color: var(--footer-fg);
+    text-decoration: none;
+  }
+  .links a:hover,
+  .bottom a:hover {
+    color: var(--accent);
+  }
+
+  /* ---------- Fila 2: legales ---------- */
+  .bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 24px;
+    padding-block: 22px;
+    border-top: 1px solid color-mix(in srgb, var(--footer-fg) 14%, transparent);
+    font-size: 0.88rem;
+    color: var(--footer-muted);
+  }
+
+  /* ---------- Tablet (≤ 1024px) ---------- */
+  @media (max-width: 1024px) {
+    .cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 40px;
+    }
+  }
+
+  /* ---------- Móvil (≤ 600px) ---------- */
+  @media (max-width: 600px) {
+    .cols {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 32px;
+    }
+    .bottom {
+      flex-direction: column;
+    }
+  }
+</style>

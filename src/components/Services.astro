@@ -1,0 +1,166 @@
+---
+/**
+ * SECCIÓN: SERVICIOS (#servicios)
+ * ------------------------------------------------------------------
+ * Grilla de servicios que Ever ofrece a las empresas. Cada tarjeta
+ * tiene ícono, título, descripción y la norma relacionada (tag).
+ *
+ * Para agregar un servicio: sumar un objeto al array `services`.
+ * Los íconos son SVG de trazo simple (24×24), se dibujan con `icon()`.
+ *
+ * Layout: 3 columnas (escritorio) → 2 (tablet ≤ 1024px) → 1 (móvil ≤ 600px).
+ */
+
+/** Envuelve el trazo de un ícono en un <svg> con estilo común. */
+const icon = (d: string) =>
+  `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+
+const services = [
+  {
+    title: 'Servicio externo de Higiene y Seguridad',
+    text: 'Cubro las horas profesionales que exige la ley según tu dotación y nivel de riesgo, con visitas programadas e informe mensual.',
+    tag: 'Dec. 1338/96',
+    icon: icon('<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/>'),
+  },
+  {
+    title: 'Relevamiento de riesgos',
+    text: 'Recorro cada puesto de trabajo y armo la matriz de riesgos con prioridades claras: qué corregir primero y con qué inversión.',
+    tag: 'Matriz IPER',
+    icon: icon('<path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>'),
+  },
+  {
+    title: 'Mediciones ambientales',
+    text: 'Ruido, iluminación y puesta a tierra con instrumental calibrado y el protocolo oficial listo para presentar.',
+    tag: 'Res. SRT 85/12 · 84/12 · 900/15',
+    icon: icon('<path d="M3 12h3l3-8 4 16 3-8h5"/>'),
+  },
+  {
+    title: 'Capacitación del personal',
+    text: 'Charlas prácticas en planta u obra: uso de EPP, trabajo en altura, manejo manual de cargas y primeros auxilios.',
+    tag: 'Constancias firmadas',
+    icon: icon('<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>'),
+  },
+  {
+    title: 'Investigación de accidentes',
+    text: 'Encuentro la causa raíz con el método del árbol de causas y cierro cada caso con acciones concretas y responsables.',
+    tag: 'Árbol de causas',
+    icon: icon('<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>'),
+  },
+  {
+    title: 'Protección contra incendios',
+    text: 'Cálculo de carga de fuego, dotación de extintores, plan de evacuación y simulacros con brigadas internas.',
+    tag: 'Dec. 351/79 · Cap. 18',
+    icon: icon('<path d="M12 22c4 0 7-3 7-7 0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-2 2-5 5-5 8 0 4 3 7 7 7z"/>'),
+  },
+];
+---
+
+<section class="section" id="servicios" aria-labelledby="servicios-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Servicios</p>
+      <h2 id="servicios-title">Todo lo que tu empresa necesita en Higiene y Seguridad, con un solo responsable</h2>
+      <p>Se contratan por separado o como servicio mensual integral. Trabajo con pymes y con grandes plantas, en coordinación con tu equipo y tu ART.</p>
+    </div>
+
+    <ul class="cards">
+      {
+        services.map((s) => (
+          <li class="card">
+            <span class="ic" set:html={s.icon} />
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+            <span class="tag">{s.tag}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* La grilla usa gap de 1px sobre fondo --line para dibujar los divisores */
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    padding: clamp(22px, 3vw, 34px);
+    background: var(--surface);
+    transition: background-color 0.25s ease;
+  }
+  .card:hover {
+    background: color-mix(in srgb, var(--tint) 45%, var(--surface));
+  }
+  .ic {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 6px;
+    border-radius: 14px;
+    background: var(--tint);
+    color: var(--accent-strong);
+  }
+  .card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-stretch: 104%;
+    line-height: 1.15;
+  }
+  .card p {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .tag {
+    margin-top: auto; /* empuja la norma al pie de la tarjeta */
+    padding-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-strong);
+  }
+
+  /* ---------- Tablet (≤ 1024px) ---------- */
+  @media (max-width: 1024px) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Móvil (≤ 600px) ---------- */
+  @media (max-width: 600px) {
+    .cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .card {
+      flex-direction: row;
+      flex-wrap: wrap;
+      column-gap: 14px;
+    }
+    .ic {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 0;
+    }
+    .card h3 {
+      flex: 1 1 0;
+      align-self: center;
+    }
+    .card p,
+    .tag {
+      flex: 1 1 100%;
+    }
+  }
+</style>

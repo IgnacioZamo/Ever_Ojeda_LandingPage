@@ -1,0 +1,269 @@
+---
+/**
+ * ENCABEZADO FIJO (header)
+ * ------------------------------------------------------------------
+ * Queda pegado arriba al hacer scroll (position: sticky) con fondo
+ * translúcido.
+ *
+ * Escritorio (> 1024px): logo + enlaces + botón "Pedir propuesta".
+ * Tablet y móvil (≤ 1024px): logo + botón + botón de menú (☰), que
+ *   despliega un panel con los enlaces.
+ *
+ * El menú se controla con el script de abajo:
+ *   - alterna `hidden` en el panel y `aria-expanded` en el botón;
+ *   - se cierra al elegir un enlace, al presionar Escape o al
+ *     agrandar la ventana a tamaño escritorio.
+ *
+ * Para agregar o quitar enlaces, editar el array `links`.
+ */
+import { site } from '../data/site';
+
+const links = [
+  { href: '#servicios', label: 'Servicios' },
+  { href: '#obras', label: 'Obras' },
+  { href: '#proceso', label: 'Cómo trabajo' },
+  { href: '#empresas', label: 'Empresas' },
+  { href: '#preguntas', label: 'Preguntas' },
+];
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <!-- Logo / marca -->
+    <a class="brand" href="#inicio" aria-label={`${site.name}, inicio`}>
+      <span class="mono" aria-hidden="true">{site.initials}</span>
+      <span class="brand-text">
+        <strong>{site.name}</strong>
+        <small>{site.shortTitle}</small>
+      </span>
+    </a>
+
+    <!-- Navegación de escritorio -->
+    <nav class="desktop-nav" aria-label="Secciones">
+      <ul>
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <a class="btn btn-primary cta" href="#contacto">Pedir propuesta</a>
+
+    <!-- Botón de menú (solo tablet y móvil) -->
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menú">
+      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+  </div>
+
+  <!-- Panel de menú (tablet y móvil) -->
+  <nav id="mobile-menu" class="mobile-menu" aria-label="Secciones" hidden>
+    <ul class="wrap">
+      {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      <li><a class="btn btn-primary menu-cta" href="#contacto">Pedir propuesta</a></li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  /* ---------- Barra ---------- */
+  .site-header {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: color-mix(in srgb, var(--tint) 85%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid color-mix(in srgb, var(--tint-2) 60%, transparent);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 68px;
+  }
+
+  /* ---------- Marca ---------- */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-right: auto; /* empuja todo lo demás a la derecha */
+    color: var(--ink);
+    text-decoration: none;
+    min-width: 0;
+  }
+  .mono {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--accent-strong);
+    color: var(--on-accent);
+    font: 800 0.95rem/1 var(--font-display);
+    font-stretch: 120%;
+    letter-spacing: 0.04em;
+  }
+  .brand-text {
+    display: grid;
+    line-height: 1.15;
+    min-width: 0;
+  }
+  .brand-text strong {
+    font: 750 1.05rem/1.1 var(--font-display);
+    font-stretch: 110%;
+    white-space: nowrap;
+  }
+  .brand-text small {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ---------- Navegación de escritorio ---------- */
+  .desktop-nav ul {
+    display: flex;
+    gap: 2px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .desktop-nav a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 999px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease;
+  }
+  .desktop-nav a:hover {
+    background: color-mix(in srgb, var(--tint-2) 70%, transparent);
+  }
+  .cta {
+    min-height: 42px;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Botón de menú (hamburguesa) ---------- */
+  .menu-btn {
+    display: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid var(--tint-2);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .bars {
+    display: grid;
+    gap: 4px;
+  }
+  .bars span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  /* Las tres barras forman una X cuando el menú está abierto */
+  .menu-btn[aria-expanded='true'] .bars span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded='true'] .bars span:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-btn[aria-expanded='true'] .bars span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* ---------- Panel de menú ---------- */
+  .mobile-menu {
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .mobile-menu ul {
+    list-style: none;
+    margin: 0;
+    padding-block: 8px 20px;
+    display: grid;
+  }
+  .mobile-menu a:not(.btn) {
+    display: block;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .menu-cta {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  /* ---------- Tablet (≤ 1024px): aparece la hamburguesa ---------- */
+  @media (max-width: 1024px) {
+    .desktop-nav {
+      display: none;
+    }
+    .menu-btn {
+      display: grid;
+    }
+  }
+
+  /* ---------- Móvil (≤ 600px): el botón de propuesta pasa al menú ---------- */
+  @media (max-width: 600px) {
+    .bar {
+      min-height: 60px;
+    }
+    .cta {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  // ---------- Menú de tablet y móvil ----------
+  (function () {
+    var btn = document.querySelector('.menu-btn');
+    var menu = document.getElementById('mobile-menu');
+    if (!btn || !menu) return;
+
+    function setOpen(open) {
+      menu.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    }
+
+    btn.addEventListener('click', function () {
+      setOpen(menu.hidden);
+    });
+
+    // Cerrar al elegir una sección
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setOpen(false);
+    });
+
+    // Cerrar con Escape y devolver el foco al botón
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !menu.hidden) {
+        setOpen(false);
+        btn.focus();
+      }
+    });
+
+    // Cerrar si la ventana pasa a tamaño escritorio
+    window.matchMedia('(min-width: 1025px)').addEventListener('change', function (mq) {
+      if (mq.matches) setOpen(false);
+    });
+  })();
+</script>

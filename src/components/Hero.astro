@@ -1,0 +1,368 @@
+---
+/**
+ * SECCIÓN: PORTADA / HERO (#inicio)
+ * ------------------------------------------------------------------
+ * Primer bloque que ve el visitante. Está escrito para empresas
+ * (gerentes, dueños, RR. HH., jefes de planta).
+ *
+ * Contiene:
+ *  - Titular + bajada con la propuesta de valor.
+ *  - Dos botones: propuesta (va a #contacto) y servicios.
+ *  - Cifras de trayectoria (EJEMPLO: reemplazar por las reales).
+ *  - Tarjeta "Informe de mediciones" con valores de EJEMPLO, para
+ *    mostrar el tipo de entregable que recibe la empresa.
+ *  - Olas animadas al pie (se mueven lento; se detienen si el sistema
+ *    pide reducir movimiento, ver global.css).
+ *
+ * Layout: 2 columnas en escritorio; 1 columna en tablet y móvil (≤ 1024px).
+ */
+import { site } from '../data/site';
+
+// EJEMPLO: valores de un informe de mediciones.
+const readings = [
+  { label: 'Ruido · sector prensas', value: '82,4', unit: 'dB(A)', limit: 'límite 85 dB(A)', norm: 'Res. SRT 85/12' },
+  { label: 'Iluminación · oficina técnica', value: '540', unit: 'lux', limit: 'mínimo 500 lux', norm: 'Res. SRT 84/12' },
+  { label: 'Puesta a tierra · tablero TG-2', value: '3,2', unit: 'Ω', limit: 'máximo 10 Ω', norm: 'Res. SRT 900/15' },
+];
+
+// EJEMPLO: cifras de trayectoria.
+const stats = [
+  { n: '+40', t: 'empresas asesoradas' },
+  { n: '+12', t: 'años de experiencia' },
+  { n: '+3.000', t: 'trabajadores capacitados' },
+];
+---
+
+<section class="hero" id="inicio">
+  <div class="wrap grid">
+    <!-- Columna izquierda: mensaje principal -->
+    <div class="copy">
+      <p class="eyebrow">Asesoramiento para empresas · {site.title}</p>
+      <h1>
+        Tu empresa cumpliendo la ley y tu equipo volviendo a casa <span class="hl">sin accidentes.</span>
+      </h1>
+      <p class="lede">
+        Soy {site.name}. Me ocupo del servicio de Higiene y Seguridad de industrias, obras y centros logísticos: relevamientos,
+        mediciones, capacitación y legajo técnico al día para la ART y las inspecciones, sin frenar la producción.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#contacto">
+          Pedir propuesta para mi empresa
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+        <a class="btn btn-ghost" href="#servicios">Ver servicios</a>
+      </div>
+      <dl class="stats">
+        {
+          stats.map((s) => (
+            <div>
+              <dt>{s.t}</dt>
+              <dd>{s.n}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <!-- Columna derecha: tarjeta de informe (ejemplo de entregable) -->
+    <aside class="report" aria-label="Ejemplo de informe de mediciones">
+      <header>
+        <div>
+          <p class="r-kicker">Informe de mediciones</p>
+          <p class="r-title">Planta metalúrgica · Turno mañana</p>
+        </div>
+        <span class="r-tag">Ejemplo</span>
+      </header>
+      <ul>
+        {
+          readings.map((r) => (
+            <li>
+              <div class="r-main">
+                <span class="r-label">{r.label}</span>
+                <span class="r-norm">{r.norm}</span>
+              </div>
+              <div class="r-val">
+                <strong>
+                  {r.value}
+                  <small>{r.unit}</small>
+                </strong>
+                <span class="pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>
+                  Cumple · {r.limit}
+                </span>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <footer>
+        <span>Instrumental calibrado</span>
+        <span>Protocolo listo para presentar</span>
+      </footer>
+    </aside>
+  </div>
+
+  <!-- Olas decorativas animadas (cada SVG mide 200% de ancho y se desplaza -50%) -->
+  <div class="hero-waves" aria-hidden="true">
+    <svg class="w1" viewBox="0 0 2880 120" preserveAspectRatio="none">
+      <path d="M0 60 C240 10 480 110 720 60 S1200 110 1440 60 S1920 110 2160 60 S2640 110 2880 60 V120 H0 Z"></path>
+    </svg>
+    <svg class="w2" viewBox="0 0 2880 120" preserveAspectRatio="none">
+      <path d="M0 70 C240 30 480 110 720 70 S1200 110 1440 70 S1920 110 2160 70 S2640 110 2880 70 V120 H0 Z"></path>
+    </svg>
+  </div>
+</section>
+
+<style>
+  /* ---------- Contenedor ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(36px, 7vw, 88px);
+    background:
+      radial-gradient(60rem 30rem at 85% 10%, color-mix(in srgb, var(--tint-2) 70%, transparent), transparent 70%),
+      var(--tint);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+    padding-bottom: clamp(72px, 9vw, 120px);
+  }
+
+  /* ---------- Texto ---------- */
+  .copy {
+    display: grid;
+    gap: 22px;
+    min-width: 0;
+  }
+  h1 {
+    font-size: clamp(2.3rem, 1.4rem + 3.9vw, 4.4rem);
+    font-weight: 800;
+    font-stretch: 110%;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+  /* Subrayado tipo resaltador en "sin accidentes." */
+  .hl {
+    color: var(--accent-strong);
+    background: linear-gradient(transparent 68%, color-mix(in srgb, var(--accent) 28%, transparent) 68%);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .lede {
+    font-size: var(--step-1);
+    color: var(--muted);
+    max-width: 58ch;
+    line-height: 1.55;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .btn-ghost {
+    background: color-mix(in srgb, var(--surface) 55%, transparent);
+  }
+
+  /* ---------- Cifras ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 12px 40px;
+    margin: 8px 0 0;
+    padding-top: 22px;
+    border-top: 1px solid var(--tint-2);
+  }
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse; /* número arriba, texto abajo (dt va primero por semántica) */
+  }
+  .stats dd {
+    margin: 0;
+    font: 800 2rem/1 var(--font-display);
+    font-stretch: 115%;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats dt {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* ---------- Tarjeta de informe ---------- */
+  .report {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+    padding: 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    transform: rotate(1.2deg);
+    transition: transform 0.4s ease;
+  }
+  .report:hover {
+    transform: rotate(0deg);
+  }
+  .report header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .r-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .r-title {
+    font: 700 1.1rem/1.3 var(--font-display);
+    margin-top: 4px;
+  }
+  .r-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px dashed var(--tint-2);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .report ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  .report li {
+    display: grid;
+    gap: 8px;
+    padding-block: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .r-main,
+  .r-val {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+  .r-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .r-norm {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .r-val strong {
+    font: 700 1.7rem/1 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .r-val small {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--ok-bg);
+    color: var(--ok);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .report footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* ---------- Olas animadas ---------- */
+  .hero-waves {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: clamp(44px, 7vw, 100px);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hero-waves svg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    animation: drift 22s linear infinite;
+  }
+  .hero-waves .w1 path {
+    fill: var(--tint-2);
+    opacity: 0.55;
+  }
+  .hero-waves .w2 {
+    animation-duration: 14s;
+    animation-direction: reverse;
+  }
+  .hero-waves .w2 path {
+    fill: var(--bg); /* mismo color que la sección siguiente */
+  }
+  @keyframes drift {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* ---------- Tablet (≤ 1024px): una columna, tarjeta centrada ---------- */
+  @media (max-width: 1024px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .copy {
+      max-width: 720px;
+    }
+    .report {
+      width: 100%;
+      max-width: 560px;
+      transform: none;
+    }
+  }
+
+  /* ---------- Móvil (≤ 600px) ---------- */
+  @media (max-width: 600px) {
+    .actions .btn {
+      flex: 1 1 100%; /* botones a todo el ancho, más fáciles de tocar */
+    }
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 20px;
+    }
+    .stats dd {
+      font-size: 1.7rem;
+    }
+    .report {
+      padding: 18px;
+    }
+    .r-val strong {
+      font-size: 1.45rem;
+    }
+  }
+</style>

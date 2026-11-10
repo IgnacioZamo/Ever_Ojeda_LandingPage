@@ -1,0 +1,144 @@
+---
+/**
+ * SECCIÓN: BENEFICIOS PARA LA EMPRESA (#beneficios)
+ * ------------------------------------------------------------------
+ * Responde la pregunta del empresario: "¿qué gano contratando esto?".
+ * Tres beneficios concretos + la lista de rubros que atiende Ever.
+ *
+ * Layout: 3 columnas en escritorio, 1 columna en tablet y móvil.
+ * Para agregar o quitar rubros, editar el array `sectors`.
+ */
+const benefits = [
+  {
+    kicker: 'Cumplimiento legal',
+    title: 'Sin multas ni intimaciones',
+    text: 'Legajo técnico, protocolos y constancias al día para las visitas de la ART y de la autoridad laboral.',
+  },
+  {
+    kicker: 'Productividad',
+    title: 'Menos días perdidos',
+    text: 'Cada accidente evitado es un puesto que sigue cubierto, una línea que no se detiene y un reemplazo que no hay que buscar.',
+  },
+  {
+    kicker: 'Costos',
+    title: 'Mejor posición frente a la ART',
+    text: 'Una siniestralidad baja y bien documentada es tu mejor argumento al negociar la alícuota.',
+  },
+];
+
+const sectors = ['Industria metalúrgica', 'Construcción', 'Logística y depósitos', 'Alimentos y bebidas', 'Química', 'Comercio y oficinas'];
+---
+
+<section class="section benefits" id="beneficios" aria-labelledby="beneficios-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Para empresas</p>
+      <h2 id="beneficios-title">La seguridad bien gestionada se traduce en números</h2>
+      <p>El servicio de Higiene y Seguridad es obligatorio por ley. Bien llevado, además, protege a tu gente y le ahorra dinero a la empresa.</p>
+    </div>
+
+    <!-- Tres beneficios -->
+    <ul class="list">
+      {
+        benefits.map((b) => (
+          <li>
+            <span class="kicker">{b.kicker}</span>
+            <h3>{b.title}</h3>
+            <p>{b.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- Rubros atendidos -->
+    <div class="sectors">
+      <span class="sectors-label">Rubros que atiendo</span>
+      <ul>
+        {sectors.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Sin padding arriba ni abajo: el carrusel (arriba) y Servicios (abajo)
+     ya aportan su propio aire, así el espacio no se duplica. */
+  .benefits {
+    padding-block: 0;
+  }
+
+  /* ---------- Beneficios ---------- */
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(20px, 3vw, 40px);
+  }
+  .list li {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 3px solid var(--accent);
+    min-width: 0;
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+  .list h3 {
+    font-size: var(--step-2);
+    font-weight: 750;
+    font-stretch: 106%;
+  }
+  .list p {
+    color: var(--muted);
+    max-width: 42ch;
+  }
+
+  /* ---------- Rubros (chips) ---------- */
+  .sectors {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-top: clamp(36px, 5vw, 56px);
+    padding: 18px 20px;
+    border-radius: 18px;
+    background: var(--tint);
+  }
+  .sectors-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .sectors ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .sectors li {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--tint-2);
+    font-size: 0.9rem;
+  }
+
+  /* ---------- Tablet y móvil (≤ 1024px) ---------- */
+  @media (max-width: 1024px) {
+    .list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .list p {
+      max-width: 60ch;
+    }
+  }
+</style>

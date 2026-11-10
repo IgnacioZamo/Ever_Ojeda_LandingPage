@@ -1,0 +1,357 @@
+---
+/**
+ * SECCIÓN: CONTACTO (#contacto)
+ * ------------------------------------------------------------------
+ * Columna izquierda: canales de contacto (datos en src/data/site.ts).
+ *   - Correo y WhatsApp tienen botón "Copiar".
+ *   - WhatsApp y LinkedIn abren en una pestaña nueva.
+ * Columna derecha: formulario de pedido de propuesta para empresas.
+ *
+ * ⚠️ El formulario todavía NO envía datos: valida los campos y muestra
+ * un aviso. Para conectarlo, reemplazar el bloque marcado "ENVÍO" en el
+ * script por un fetch() a un servicio de formularios (Formspree,
+ * Netlify Forms, un endpoint propio, etc.).
+ *
+ * Fondo: banda turquesa (.band).
+ * Layout: 2 columnas → 1 columna en tablet y móvil (≤ 1024px).
+ */
+import { site, whatsappUrl } from '../data/site';
+import ContactIcon from './ContactIcon.astro';
+
+const { contact } = site;
+---
+
+<section class="section band" id="contacto" aria-labelledby="contacto-title">
+  <div class="wrap grid">
+    <!-- Columna izquierda: datos de contacto -->
+    <div class="info">
+      <p class="eyebrow">Contacto</p>
+      <h2 id="contacto-title">Pedí una propuesta para tu empresa</h2>
+      <p class="lead">
+        Contame el rubro, la cantidad de trabajadores y qué necesitás resolver. Te respondo dentro de las 24 horas hábiles con una propuesta y
+        un presupuesto.
+      </p>
+
+      <ul class="channels">
+        <li>
+          <ContactIcon name="whatsapp" />
+          <div>
+            <span class="label">WhatsApp</span>
+            <span class="value">{contact.whatsappLabel}</span>
+          </div>
+          <a class="chip" href={whatsappUrl} target="_blank" rel="noopener noreferrer">Escribir</a>
+        </li>
+        <li>
+          <ContactIcon name="email" />
+          <div>
+            <span class="label">Correo electrónico</span>
+            <span class="value">{contact.email}</span>
+          </div>
+          <button type="button" class="chip" data-copy={contact.email}>Copiar</button>
+        </li>
+        <li>
+          <ContactIcon name="linkedin" />
+          <div>
+            <span class="label">LinkedIn</span>
+            <span class="value">{contact.linkedinLabel}</span>
+          </div>
+          <a class="chip" href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer">Ver perfil</a>
+        </li>
+        <li>
+          <ContactIcon name="pin" />
+          <div>
+            <span class="label">Zona y horario</span>
+            <span class="value">{contact.zone}</span>
+            <span class="sub">{contact.hours}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Columna derecha: formulario -->
+    <form class="form" id="contact-form" novalidate>
+      <div class="row two">
+        <div>
+          <label for="c-name">Nombre y apellido</label>
+          <input id="c-name" name="name" type="text" autocomplete="name" required placeholder="Ej.: Laura Gómez" />
+        </div>
+        <div>
+          <label for="c-role">Cargo</label>
+          <input id="c-role" name="role" type="text" autocomplete="organization-title" placeholder="Ej.: Jefa de RR. HH." />
+        </div>
+      </div>
+      <div class="row">
+        <label for="c-company">Empresa</label>
+        <input id="c-company" name="company" type="text" autocomplete="organization" required placeholder="Ej.: Metalúrgica San Martín S.A." />
+      </div>
+      <div class="row two">
+        <div>
+          <label for="c-sector">Rubro</label>
+          <select id="c-sector" name="sector">
+            <option>Industria</option>
+            <option>Construcción</option>
+            <option>Logística y depósitos</option>
+            <option>Alimentos y bebidas</option>
+            <option>Comercio y oficinas</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div>
+          <label for="c-size">Cantidad de trabajadores</label>
+          <select id="c-size" name="size">
+            <option>Hasta 15</option>
+            <option>16 a 50</option>
+            <option>51 a 150</option>
+            <option>Más de 150</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <label for="c-email">Correo electrónico</label>
+        <input id="c-email" name="email" type="email" autocomplete="email" required placeholder="nombre@empresa.com" />
+      </div>
+      <div class="row">
+        <label for="c-msg">¿Qué necesita tu empresa?</label>
+        <textarea id="c-msg" name="message" rows="4" required placeholder="Ej.: Necesitamos el servicio mensual, la medición de ruido anual y capacitar al personal nuevo."></textarea>
+      </div>
+      <button class="btn btn-primary submit" type="submit">Pedir propuesta</button>
+      <p class="status" id="contact-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<style>
+  /* ---------- Layout ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+
+  /* ---------- Columna de datos ---------- */
+  .info {
+    display: grid;
+    gap: 18px;
+    min-width: 0;
+  }
+  .info h2 {
+    font-size: var(--step-3);
+    font-weight: 750;
+    font-stretch: 108%;
+  }
+  .lead {
+    color: var(--muted);
+    max-width: 52ch;
+  }
+  .channels {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: grid;
+  }
+  .channels li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding-block: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .channels li > div {
+    display: grid;
+    min-width: 0;
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .value {
+    font-weight: 600;
+    user-select: all; /* un clic selecciona todo el dato */
+    overflow-wrap: anywhere;
+  }
+  .sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .chip {
+    font: 600 0.8rem/1 var(--font-body);
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--tint-2);
+    background: var(--surface);
+    color: var(--accent-strong);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .chip:hover {
+    border-color: var(--accent);
+  }
+
+  /* ---------- Formulario ---------- */
+  .form {
+    display: grid;
+    gap: 18px;
+    min-width: 0;
+    padding: clamp(20px, 4vw, 36px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+  }
+  .row {
+    display: grid;
+    gap: 6px;
+  }
+  .two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .two > div {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+  label {
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem; /* 16px evita el zoom automático en iOS */
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  textarea {
+    resize: vertical;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: color-mix(in srgb, var(--muted) 70%, transparent);
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  input[aria-invalid='true'],
+  textarea[aria-invalid='true'] {
+    border-color: var(--danger);
+  }
+  .submit {
+    justify-self: start;
+  }
+  .status {
+    min-height: 1.5em;
+    font-size: 0.95rem;
+    color: var(--accent-strong);
+  }
+  .status.error {
+    color: var(--danger);
+  }
+
+  /* ---------- Tablet (≤ 1024px) ---------- */
+  @media (max-width: 1024px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .info,
+    .form {
+      max-width: 720px;
+    }
+  }
+
+  /* ---------- Móvil (≤ 600px) ---------- */
+  @media (max-width: 600px) {
+    .two {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .submit {
+      justify-self: stretch;
+    }
+    .channels li {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+    /* El botón pasa debajo del dato, alineado con el texto */
+    .chip {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+</style>
+
+<script is:inline>
+  // ---------- Botones "Copiar" (correo) ----------
+  // Usa el portapapeles; si no está disponible, selecciona el texto para copiar a mano.
+  (function () {
+    document.querySelectorAll('[data-copy]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var text = btn.getAttribute('data-copy');
+        var valueEl = btn.parentElement.querySelector('.value');
+        var done = function () {
+          var prev = btn.textContent;
+          btn.textContent = 'Copiado';
+          setTimeout(function () {
+            btn.textContent = prev;
+          }, 1600);
+        };
+        var fallback = function () {
+          var range = document.createRange();
+          range.selectNodeContents(valueEl);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        };
+        try {
+          navigator.clipboard.writeText(text).then(done, fallback);
+        } catch (e) {
+          fallback();
+        }
+      });
+    });
+  })();
+
+  // ---------- Formulario de contacto ----------
+  (function () {
+    var form = document.getElementById('contact-form');
+    var status = document.getElementById('contact-status');
+    if (!form) return;
+    var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+
+      // Validación: campos obligatorios y formato de correo
+      var invalid = [];
+      form.querySelectorAll('[required]').forEach(function (f) {
+        var bad = !f.value.trim() || (f.type === 'email' && !emailRe.test(f.value));
+        f.setAttribute('aria-invalid', bad ? 'true' : 'false');
+        if (bad) invalid.push(f);
+      });
+      if (invalid.length) {
+        status.className = 'status error';
+        status.textContent = 'Revisá los campos marcados: nombre, empresa, un correo válido y tu mensaje.';
+        invalid[0].focus();
+        return;
+      }
+
+      // ENVÍO: reemplazar este aviso por el envío real cuando haya un servicio de formularios.
+      status.className = 'status';
+      status.textContent = 'Gracias. Este formulario todavía no está conectado: por ahora escribí por WhatsApp o al correo.';
+    });
+  })();
+</script>

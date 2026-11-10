@@ -1,0 +1,58 @@
+---
+/**
+ * PÁGINA PRINCIPAL (/)
+ * ------------------------------------------------------------------
+ * Arma la landing ordenando los componentes de src/components.
+ * Para mover, quitar o agregar una sección, cambiar el orden acá.
+ *
+ * <Wave from="..." to="..."> dibuja la ola animada que une dos
+ * secciones: from = color de la sección de ARRIBA, to = color de la de
+ * ABAJO (nombres de tokens de global.css, sin "--"). Si cambiás el
+ * orden de las secciones, revisá que los colores de las olas coincidan.
+ *
+ * Orden y fondo de cada sección ([bg] claro · [tint] turquesa):
+ *   Header (sticky) · Hero [tint] · Empresas [bg] · Beneficios [bg]
+ *   · Servicios [bg] ~ Sobre mí/Proceso [tint] ~ Obras [bg]
+ *   ~ Testimonios [tint] ~ Preguntas [bg] ~ Contacto [tint]
+ *   ~ Footer [footer-bg]
+ */
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import LogoCarousel from '../components/LogoCarousel.astro';
+import Benefits from '../components/Benefits.astro';
+import Services from '../components/Services.astro';
+import Process from '../components/Process.astro';
+import Gallery from '../components/Gallery.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Faq from '../components/Faq.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import Wave from '../components/Wave.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title={site.name}
+  description={`${site.name}, ${site.title}. Servicio de Higiene y Seguridad para empresas: relevamientos, mediciones, capacitación y legajo técnico.`}
+>
+  <Header />
+  <main>
+    <Hero />
+    <LogoCarousel />
+    <Benefits />
+    <Services />
+    <Wave from="bg" to="tint" />
+    <Process />
+    <Wave from="tint" to="bg" reverse />
+    <Gallery />
+    <Wave from="bg" to="tint" />
+    <Testimonials />
+    <Wave from="tint" to="bg" reverse />
+    <Faq />
+    <Wave from="bg" to="tint" />
+    <Contact />
+  </main>
+  <Wave from="tint" to="footer-bg" reverse />
+  <Footer />
+</Layout>

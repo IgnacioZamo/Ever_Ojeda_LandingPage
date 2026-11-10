@@ -1,0 +1,236 @@
+---
+/**
+ * SECCIÓN: CARRUSEL DE EMPRESAS (#empresas)
+ * ------------------------------------------------------------------
+ * Muestra las empresas donde Ever ya trabajó, desplazándose en bucle.
+ *
+ * Comportamiento:
+ *  - En reposo los logos se ven en gris y semitransparentes.
+ *  - Al pasar el mouse (o enfocar con teclado) el carrusel se detiene
+ *    y el logo señalado recupera su color de marca.
+ *  - Con "reducir movimiento" activado en el sistema, no se anima y
+ *    los logos se muestran en una grilla estática.
+ *
+ * Cómo funciona el bucle infinito:
+ *  - La lista se renderiza DOS veces dentro de `.track`.
+ *  - La animación mueve `.track` un -50% (exactamente una copia) y
+ *    vuelve a empezar, así el salto no se nota.
+ *  - La segunda copia lleva aria-hidden para que los lectores de
+ *    pantalla no lean cada empresa dos veces.
+ *
+ * Tamaño de los logos:
+ *  - Todas las cajas (.logo) tienen el MISMO ancho, alto y padding,
+ *    definidos con las variables --logo-w / --logo-h / --logo-pad.
+ *    El contenido se centra dentro de la caja.
+ *
+ * Datos: src/data/companies.ts
+ */
+import { companies, type Mark } from '../data/companies';
+
+// Íconos de ejemplo (caja de 40×40). Se reemplazan cuando haya logos reales.
+const marks: Record<Mark, string> = {
+  triangle: '<path d="M20 4 L37 34 H3 Z"/><path d="M20 16 L28 30 H12 Z" fill="#fff" opacity=".9"/>',
+  circle: '<circle cx="20" cy="20" r="17"/><path d="M8 22 C14 16 20 28 32 18" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+  leaf: '<path d="M6 34 C6 14 20 4 36 4 C36 22 26 34 6 34 Z"/><path d="M10 30 L28 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>',
+  bolt: '<rect x="2" y="2" width="36" height="36" rx="9"/><path d="M22 7 L11 23 H19 L17 33 L29 16 H21 Z" fill="#fff"/>',
+  gear: '<path d="M17 2h6l1 5 4 2 5-3 4 4-3 5 2 4 5 1v6l-5 1-2 4 3 5-4 4-5-3-4 2-1 5h-6l-1-5-4-2-5 3-4-4 3-5-2-4-5-1v-6l5-1 2-4-3-5 4-4 5 3 4-2z"/><circle cx="20" cy="20" r="6" fill="#fff"/>',
+  hex: '<path d="M20 2 L36 11 V29 L20 38 L4 29 V11 Z"/><circle cx="20" cy="20" r="6" fill="#fff"/>',
+  drop: '<path d="M20 2 C28 13 34 20 34 26 A14 14 0 0 1 6 26 C6 20 12 13 20 2 Z"/><path d="M13 26 A7 7 0 0 0 20 33" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>',
+  anchor: '<circle cx="20" cy="20" r="18"/><path d="M20 10 V31 M13 15 H27 M10 23 C11 29 16 31 20 31 C24 31 29 29 30 23" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>',
+};
+
+// Dos copias de la lista para el bucle (ver explicación arriba).
+const copies = [0, 1];
+---
+
+<section class="clients section no-deco" id="empresas" aria-labelledby="empresas-title">
+  <!-- Encabezado de la sección -->
+  <div class="wrap head">
+    <p class="eyebrow">Trayectoria</p>
+    <h2 id="empresas-title">Empresas que ya confiaron en mi trabajo</h2>
+    <p>Industrias, obras y centros logísticos donde implementé programas de seguridad, mediciones y capacitaciones.</p>
+  </div>
+
+  <!-- Carrusel: .marquee recorta, .track se anima, .group es cada copia -->
+  <div class="marquee">
+    <div class="track">
+      {
+        copies.map((copy) => (
+          <ul class="group" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {companies.map((c) => (
+              <li
+                class="logo"
+                style={`--brand: ${c.color}`}
+                tabindex={copy === 0 ? 0 : undefined}
+              >
+                <svg class="mark" viewBox="0 0 40 40" fill={c.color} aria-hidden="true" set:html={marks[c.mark]} />
+                <span class="text">
+                  <span class="l-name">{c.name}</span>
+                  <span class="l-sector">{c.sector}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---------- Contenedor ---------- */
+  .clients {
+    background: var(--bg);
+    /* Medidas comunes a TODAS las cajas de logo */
+    --logo-w: 248px;
+    --logo-h: 84px;
+    --logo-pad: 18px;
+    --logo-gap: 20px;
+  }
+
+  /* ---------- Encabezado ---------- */
+  .head {
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+    text-align: center;
+    margin-bottom: clamp(24px, 4vw, 40px);
+  }
+  .head h2 {
+    font-size: var(--step-2);
+    font-weight: 750;
+    font-stretch: 108%;
+  }
+  .head p:last-child {
+    color: var(--muted);
+    max-width: 58ch;
+  }
+
+  /* ---------- Carrusel ---------- */
+  .marquee {
+    overflow: hidden; /* evita scroll horizontal de la página */
+    padding-block: 16px;
+    /* Desvanece los bordes izquierdo y derecho */
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .track {
+    display: flex;
+    width: max-content;
+    animation: marquee 45s linear infinite;
+  }
+  /* Pausa al pasar el mouse o al navegar con teclado */
+  .marquee:hover .track,
+  .marquee:focus-within .track {
+    animation-play-state: paused;
+  }
+  .group {
+    display: flex;
+    align-items: center;
+    gap: var(--logo-gap);
+    /* padding derecho = gap, para que las dos copias queden equidistantes */
+    padding: 0 var(--logo-gap) 0 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  /* ---------- Caja de cada logo (todas iguales) ---------- */
+  .logo {
+    flex: none;
+    width: var(--logo-w);
+    height: var(--logo-h);
+    padding: 0 var(--logo-pad);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    color: var(--muted);
+    filter: grayscale(1);
+    opacity: 0.6;
+    transition: filter 0.35s ease, opacity 0.35s ease, color 0.35s ease, transform 0.35s ease, background-color 0.35s ease,
+      border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .mark {
+    flex: none;
+    width: 36px;
+    height: 36px;
+  }
+  .text {
+    display: grid;
+    min-width: 0;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .l-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 17px;
+  }
+  .l-sector {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Estado activo: color de marca */
+  .logo:hover,
+  .logo:focus-visible {
+    filter: none;
+    opacity: 1;
+    color: var(--brand);
+    transform: translateY(-3px);
+    background: var(--surface);
+    border-color: var(--line);
+    box-shadow: var(--shadow);
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* ---------- Móvil (≤ 600px): cajas más chicas, mismas proporciones ---------- */
+  @media (max-width: 600px) {
+    .clients {
+      --logo-w: 204px;
+      --logo-h: 72px;
+      --logo-pad: 14px;
+      --logo-gap: 12px;
+    }
+    .mark {
+      width: 30px;
+      height: 30px;
+    }
+    .l-name {
+      font-size: 14px;
+    }
+    .l-sector {
+      font-size: 9.5px;
+    }
+    .track {
+      animation-duration: 35s;
+    }
+  }
+
+  /* ---------- Accesibilidad: sin animación ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+      width: auto;
+      justify-content: center;
+    }
+    .group {
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 16px;
+    }
+    .group[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>

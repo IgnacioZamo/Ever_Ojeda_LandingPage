@@ -1,0 +1,209 @@
+---
+/**
+ * COMPONENTE: ILUSTRACIÓN DE EJEMPLO PARA LA GALERÍA
+ * ------------------------------------------------------------------
+ * Dibuja una escena simple (obra, andamio, planta, depósito,
+ * capacitación o medición) que ocupa el lugar de una foto real
+ * mientras no haya fotos. Se recorta como una foto (slice).
+ *
+ * Props:
+ *  - scene: tipo de escena (ver src/data/photos.ts).
+ *  - uid:   identificador único; evita que los degradados de una
+ *           ilustración choquen con los de otra.
+ *
+ * Los colores son fijos (como en una foto) y funcionan en ambos temas.
+ * Cuando todas las fotos sean reales, este componente se puede borrar.
+ */
+import type { Scene } from '../data/photos';
+
+interface Props {
+  scene: Scene;
+  uid: string;
+}
+
+const { scene, uid } = Astro.props;
+const sky = `${uid}-sky`;
+const floor = `${uid}-floor`;
+---
+
+<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="presentation">
+  <defs>
+    <linearGradient id={sky} x1="0" y1="0" x2="0" y2="1">
+      {
+        scene === 'planta' ? (
+          <>
+            <stop offset="0" stop-color="#f3d7b4" />
+            <stop offset="1" stop-color="#cbe8ea" />
+          </>
+        ) : scene === 'deposito' || scene === 'capacitacion' || scene === 'medicion' ? (
+          <>
+            <stop offset="0" stop-color="#dfe9e8" />
+            <stop offset="1" stop-color="#c3d3d2" />
+          </>
+        ) : (
+          <>
+            <stop offset="0" stop-color="#8fd3dc" />
+            <stop offset="1" stop-color="#e6f5f3" />
+          </>
+        )
+      }
+    </linearGradient>
+    <linearGradient id={floor} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9a68a" />
+      <stop offset="1" stop-color="#97836a" />
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="300" fill={`url(#${sky})`}></rect>
+
+  {
+    scene === 'obra' && (
+      <g>
+        {/* Edificio en estructura */}
+        <rect x="150" y="110" width="170" height="150" fill="#a9b6b9" />
+        {[0, 1, 2, 3, 4].map((i) => (
+          <rect x="150" y={110 + i * 30} width="170" height="6" fill="#6f7f84" />
+        ))}
+        {[0, 1, 2, 3].map((i) => (
+          <rect x={150 + i * 54} y="110" width="8" height="150" fill="#6f7f84" />
+        ))}
+        {/* Grúa torre */}
+        <rect x="88" y="40" width="12" height="220" fill="#e0ad35" />
+        <path d="M88 40 L100 52 M100 52 L88 64 M88 64 L100 76 M100 76 L88 88 M88 88 L100 100 M100 100 L88 112 M88 112 L100 124" stroke="#a87b16" stroke-width="2" />
+        <rect x="40" y="36" width="270" height="9" fill="#e0ad35" />
+        <rect x="40" y="45" width="34" height="14" fill="#5d6a6e" />
+        <path d="M94 36 L94 18 L60 36 M94 18 L300 36" stroke="#a87b16" stroke-width="2" fill="none" />
+        <line x1="250" y1="45" x2="250" y2="120" stroke="#33454a" stroke-width="1.5" />
+        <rect x="236" y="120" width="28" height="12" fill="#d9733b" />
+        <rect y="258" width="400" height="42" fill={`url(#${floor})`} />
+      </g>
+    )
+  }
+
+  {
+    scene === 'andamio' && (
+      <g>
+        <rect x="60" y="30" width="300" height="240" fill="#e2d4bf" />
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <rect x={86 + i * 46} y="52" width="22" height="30" fill="#bfae95" />
+        ))}
+        {/* Estructura del andamio */}
+        {[0, 1, 2, 3].map((i) => (
+          <rect x={70 + i * 90} y="40" width="5" height="230" fill="#7d8a8e" />
+        ))}
+        {[0, 1, 2, 3].map((i) => (
+          <rect x="66" y={95 + i * 55} width="284" height="7" fill="#b07a3c" />
+        ))}
+        {[0, 1, 2].map((i) => (
+          <path d={`M${72 + i * 90} ${100 + 55} L${162 + i * 90} 100`} stroke="#7d8a8e" stroke-width="3" />
+        ))}
+        {/* Trabajador con casco y arnés */}
+        <circle cx="210" cy="72" r="9" fill="#f2c94c" />
+        <rect x="201" y="81" width="18" height="14" rx="4" fill="#f08a24" />
+        <line x1="210" y1="81" x2="232" y2="42" stroke="#33454a" stroke-width="1.5" />
+        <rect y="268" width="400" height="32" fill={`url(#${floor})`} />
+      </g>
+    )
+  }
+
+  {
+    scene === 'planta' && (
+      <g>
+        <circle cx="300" cy="80" r="34" fill="#f8e6c9" />
+        <circle cx="110" cy="70" r="20" fill="#eef3f2" opacity=".8" />
+        <circle cx="130" cy="52" r="14" fill="#eef3f2" opacity=".6" />
+        <rect x="100" y="90" width="22" height="130" fill="#56696f" />
+        <rect x="150" y="70" width="18" height="150" fill="#4b5d63" />
+        <path d="M30 220 V160 L90 130 V160 L150 130 V160 L210 130 V220 Z" fill="#3f5257" />
+        <rect x="210" y="140" width="160" height="80" fill="#4f6369" />
+        {[0, 1, 2, 3, 4].map((i) => (
+          <rect x={224 + i * 30} y="160" width="16" height="12" fill="#f3d7b4" opacity=".85" />
+        ))}
+        <rect x="250" y="110" width="70" height="30" rx="15" fill="#6a7f85" />
+        <rect y="220" width="400" height="80" fill="#8f9c8c" />
+        <rect y="240" width="400" height="6" fill="#e8e1cf" opacity=".6" />
+      </g>
+    )
+  }
+
+  {
+    scene === 'deposito' && (
+      <g>
+        <rect y="220" width="400" height="80" fill="#a7b3b1" />
+        <path d="M0 262 H400" stroke="#f2c94c" stroke-width="6" />
+        {/* Racks */}
+        {[0, 1, 2].map((r) => (
+          <g>
+            <rect x={30 + r * 120} y="50" width="6" height="172" fill="#d9733b" />
+            <rect x={124 + r * 120} y="50" width="6" height="172" fill="#d9733b" />
+            {[0, 1, 2].map((l) => (
+              <g>
+                <rect x={30 + r * 120} y={90 + l * 55} width="100" height="6" fill="#2f5f8a" />
+                <rect x={42 + r * 120} y={62 + l * 55} width="34" height="28" fill="#c9a46a" />
+                <rect x={80 + r * 120} y={68 + l * 55} width="38" height="22" fill="#b98f55" />
+              </g>
+            ))}
+          </g>
+        ))}
+        {/* Autoelevador */}
+        <rect x="250" y="210" width="70" height="38" rx="6" fill="#f2b632" />
+        <rect x="262" y="180" width="40" height="32" fill="none" stroke="#33454a" stroke-width="4" />
+        <rect x="320" y="170" width="5" height="80" fill="#33454a" />
+        <rect x="325" y="236" width="30" height="5" fill="#33454a" />
+        <circle cx="266" cy="252" r="10" fill="#23343a" />
+        <circle cx="306" cy="252" r="10" fill="#23343a" />
+      </g>
+    )
+  }
+
+  {
+    scene === 'capacitacion' && (
+      <g>
+        <rect x="90" y="40" width="220" height="110" rx="6" fill="#fbfdfd" stroke="#9fb3b2" stroke-width="3" />
+        <rect x="110" y="62" width="110" height="8" rx="4" fill="#14b0a0" />
+        <rect x="110" y="82" width="170" height="6" rx="3" fill="#b5c6c5" />
+        <rect x="110" y="98" width="140" height="6" rx="3" fill="#b5c6c5" />
+        <rect x="110" y="114" width="90" height="6" rx="3" fill="#b5c6c5" />
+        {/* Instructor */}
+        <circle cx="336" cy="128" r="12" fill="#f2c94c" />
+        <rect x="322" y="140" width="28" height="60" rx="8" fill="#0a776c" />
+        {/* Asistentes */}
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <g>
+            <circle cx={40 + i * 62} cy="210" r="15" fill={i % 2 ? '#f2c94c' : '#f8f8f4'} />
+            <rect x={20 + i * 62} y="226" width="40" height="80" rx="14" fill={i % 2 ? '#2b6f77' : '#3f8f86'} />
+          </g>
+        ))}
+      </g>
+    )
+  }
+
+  {
+    scene === 'medicion' && (
+      <g>
+        {/* Maquinaria de fondo, desenfocada */}
+        <rect x="0" y="60" width="180" height="200" fill="#6d7f84" opacity=".55" />
+        <rect x="230" y="40" width="170" height="230" fill="#5b6c71" opacity=".5" />
+        <circle cx="90" cy="150" r="40" fill="#8a9a9e" opacity=".5" />
+        <rect y="250" width="400" height="50" fill="#7f8d8b" />
+        {/* Sonómetro en mano */}
+        <rect x="150" y="70" width="100" height="190" rx="18" fill="#23343a" />
+        <circle cx="200" cy="58" r="20" fill="#3b4f55" />
+        <rect x="164" y="92" width="72" height="56" rx="6" fill="#9fe3d6" />
+        <text x="200" y="128" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="20" font-weight="700" fill="#0d2b30">82.4</text>
+        <text x="200" y="142" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#0d2b30">dB(A)</text>
+        <circle cx="180" cy="176" r="8" fill="#3b4f55" />
+        <circle cx="220" cy="176" r="8" fill="#3b4f55" />
+        <path d="M150 220 Q120 230 112 270 L300 270 Q280 232 250 220 Z" fill="#c68b67" />
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
