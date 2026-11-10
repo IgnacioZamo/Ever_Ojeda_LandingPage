@@ -12,6 +12,14 @@ Hecha con [Astro](https://astro.build), HTML y CSS (sin frameworks de estilos).
 | `npm run build`    | Genera la versión final en `dist/`.                                      |
 | `npm run artifact` | Compila y crea `artifact/ever-ojeda.html`, el archivo único que se publica como Artifact. |
 
+## Publicación en GitHub Pages
+
+La web se publica sola en **https://ignaciozamo.github.io/Ever_Ojeda_LandingPage/** cada vez que se hace `git push` a `main`.
+Lo hace el workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): compila con Astro y sube la carpeta `dist/`.
+
+Configuración necesaria (una sola vez): en GitHub → **Settings → Pages → Build and deployment → Source**, elegir **GitHub Actions**.
+El progreso de cada publicación se ve en la pestaña **Actions** del repositorio.
+
 ## Estructura
 
 ```

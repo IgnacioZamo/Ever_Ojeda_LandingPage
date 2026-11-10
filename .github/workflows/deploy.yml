@@ -1,0 +1,56 @@
+# PUBLICACIÓN AUTOMÁTICA EN GITHUB PAGES
+# ------------------------------------------------------------------
+# Cada vez que se hace push a la rama main, GitHub:
+#   1. descarga el código,
+#   2. instala dependencias y compila la web con Astro (npm run build),
+#   3. publica la carpeta dist/ en GitHub Pages.
+# También se puede lanzar a mano desde la pestaña "Actions" (Run workflow).
+#
+# Requisito (una sola vez): en GitHub → Settings → Pages → "Build and
+# deployment" → Source: elegir "GitHub Actions".
+#
+# URL resultante: https://ignaciozamo.github.io/Ever_Ojeda_LandingPage/
+
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si llegan dos push seguidos, se publica solo el último.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Usados por astro.config.mjs para generar las rutas correctas
+      SITE_URL: https://ignaciozamo.github.io
+      BASE_PATH: /Ever_Ojeda_LandingPage
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Instalar, compilar y preparar la web
+        uses: withastro/action@v3
+        with:
+          node-version: 20
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

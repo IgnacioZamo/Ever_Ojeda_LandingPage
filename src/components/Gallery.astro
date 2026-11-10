@@ -20,6 +20,9 @@ import { photos, categories } from '../data/photos';
 import PhotoScene from './PhotoScene.astro';
 
 const filters = ['Todas', ...categories];
+
+/** Antepone la ruta base del sitio (necesario en GitHub Pages, donde la web vive en una subcarpeta). */
+const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}`;
 ---
 
 <section class="section gallery" id="obras" aria-labelledby="obras-title">
@@ -51,7 +54,7 @@ const filters = ['Todas', ...categories];
             <li class:list={['tile', p.size ?? 'normal']} data-category={p.category}>
               <button type="button" class="tile-btn" data-index={i} aria-label={`Ampliar foto: ${p.title}`}>
                 <span class="media" data-uid={uid}>
-                  {p.src ? <img src={p.src} alt={p.alt ?? p.title} loading="lazy" /> : <PhotoScene scene={p.scene} uid={uid} />}
+                  {p.src ? <img src={withBase(p.src)} alt={p.alt ?? p.title} loading="lazy" /> : <PhotoScene scene={p.scene} uid={uid} />}
                 </span>
                 {!p.src && <span class="badge">Foto de ejemplo</span>}
                 <span class="cap">
